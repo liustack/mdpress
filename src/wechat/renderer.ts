@@ -6,7 +6,13 @@ import remarkGfm from 'remark-gfm';
 import remarkRehype from 'remark-rehype';
 import rehypeRaw from 'rehype-raw';
 import rehypeStringify from 'rehype-stringify';
-import { rehypeSanitizeTags, rehypeBase64Images, rehypeInlineStyles } from './plugins/index.ts';
+import {
+    rehypeSanitizeTags,
+    rehypeBase64Images,
+    rehypeCodeHighlight,
+    rehypeFootnoteLinks,
+    rehypeInlineStyles,
+} from './plugins/index.ts';
 
 export interface RenderOptions {
     input: string;
@@ -42,6 +48,8 @@ export async function render(options: RenderOptions): Promise<RenderResult> {
         .use(rehypeRaw)
         .use(rehypeSanitizeTags)
         .use(rehypeBase64Images, { baseDir: inputDir })
+        .use(rehypeCodeHighlight)
+        .use(rehypeFootnoteLinks)
         .use(rehypeInlineStyles)
         .use(rehypeStringify, { allowDangerousHtml: true })
         .process(markdown);
