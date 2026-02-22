@@ -1,0 +1,190 @@
+import type { Plugin } from 'unified';
+import type { Root, Element, Text, ElementContent } from 'hast';
+import { visit, SKIP } from 'unist-util-visit';
+
+/** Tags allowed in WeChat MP editor output. */
+const ALLOWED_TAGS = new Set([
+    // Block
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'p', 'blockquote', 'pre', 'code',
+    'ul', 'ol', 'li',
+    'table', 'thead', 'tbody', 'tr', 'th', 'td',
+    'section', 'figure', 'figcaption',
+    'hr', 'br', 'img',
+    // Inline
+    'a', 'strong', 'em', 'b', 'i', 'del', 's',
+    'span', 'sup', 'sub', 'mark',
+    // SVG
+    'svg', 'path', 'circle', 'rect', 'line', 'polyline', 'polygon',
+    'ellipse', 'g', 'defs', 'clipPath', 'use', 'text', 'tspan',
+    'linearGradient', 'radialGradient', 'stop', 'mask', 'pattern',
+    'symbol', 'title', 'desc', 'foreignObject',
+]);
+
+/** Tags that should be removed entirely including children. */
+const REMOVE_WITH_CHILDREN = new Set([
+    'script', 'style', 'link', 'iframe', 'frame', 'frameset',
+    'form', 'textarea', 'select', 'button',
+    'audio', 'video', 'source', 'track',
+    'object', 'embed', 'canvas',
+    'noscript', 'template',
+]);
+
+/** Block-level tags whose direct text children should be wrapped in <span>. */
+const BLOCK_TAGS = new Set([
+    'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'blockquote', 'li', 'td', 'th', 'figcaption', 'section',
+]);
+
+/** Inline tags that should NOT be wrapped in an additional span. */
+const INLINE_TAGS = new Set([
+    'a', 'strong', 'em', 'b', 'i', 'del', 's',
+    'span', 'sup', 'sub', 'mark', 'code', 'br', 'img',
+]);
+
+function isElement(node: any): node is Element {
+    return node && node.type === 'element';
+}
+
+function isText(node: any): node is Text {
+    return node && node.type === 'text';
+}
+
+/**
+ * Rehype plugin that sanitizes HTML tags for WeChat MP editor compatibility.
+ *
+ * - Removes dangerous tags (script, style, iframe, etc.) with children
+ * - Converts div → section
+ * - Converts task list checkboxes to Unicode ☑/☐
+ * - Removes id and on* event attributes
+ * - Unwraps unknown tags, preserving children
+ * - Wraps bare text nodes inside block elements with <span>
+ */
+export const rehypeSanitizeTags: Plugin<[], Root> = () => {
+    return (tree: Root) => {
+        // Pass 1: sanitize tags and attributes
+        visit(tree, 'element', (node: Element, index, parent) => {
+            if (index === undefined || !parent) return;
+
+            // Remove dangerous tags entirely
+            if (REMOVE_WITH_CHILDREN.has(node.tagName)) {
+                parent.children.splice(index, 1);
+                return [SKIP, index];
+            }
+
+            // Handle input[type=checkbox] → Unicode
+            if (node.tagName === 'input') {
+                const props = node.properties || {};
+                if (props.type === 'checkbox') {
+                    const checked = props.checked === true || props.checked === '';
+                    const text: Text = {
+                        type: 'text',
+                        value: checked ? '☑ ' : '☐ ',
+                    };
+                    parent.children.splice(index, 1, text);
+                    return [SKIP, index];
+                }
+                // Non-checkbox input: remove
+                parent.children.splice(index, 1);
+                return [SKIP, index];
+            }
+
+            // div → section
+            if (node.tagName === 'div') {
+                node.tagName = 'section';
+            }
+
+            // Unwrap unknown tags (not in allowed list), keep children
+            if (!ALLOWED_TAGS.has(node.tagName)) {
+                const children = node.children || [];
+                parent.children.splice(index, 1, ...children);
+                return [SKIP, index];
+            }
+
+            // Clean attributes
+            if (node.properties) {
+                const props = node.properties;
+                // Remove id
+                delete props.id;
+                // Remove on* event handlers
+                for (const key of Object.keys(props)) {
+                    if (key.startsWith('on') && key.length > 2) {
+                        delete props[key];
+                    }
+                }
+            }
+        });
+
+        // Pass 2: wrap bare text in block elements with <span>
+        visit(tree, 'element', (node: Element) => {
+            if (!BLOCK_TAGS.has(node.tagName)) return;
+
+            const newChildren: ElementContent[] = [];
+            let needsWrapping = false;
+
+            for (const child of node.children) {
+                if (isText(child) && child.value.trim() !== '') {
+                    // Check if this text node is the only child or mixed with non-inline elements
+                    // Only wrap if the block element has bare text
+                    const hasInlineOnly = node.children.every(
+                        (c) => isText(c) || (isElement(c) && INLINE_TAGS.has(c.tagName)),
+                    );
+
+                    if (hasInlineOnly) {
+                        needsWrapping = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!needsWrapping) return;
+
+            // Check if already wrapped (single span child containing all content)
+            if (
+                node.children.length === 1 &&
+                isElement(node.children[0]) &&
+                node.children[0].tagName === 'span'
+            ) {
+                return;
+            }
+
+            // Check if all children are already inline elements (no bare text to wrap)
+            const hasBareText = node.children.some(
+                (c) => isText(c) && c.value.trim() !== '',
+            );
+            if (!hasBareText) return;
+
+            // Group consecutive text and inline elements into spans
+            let group: ElementContent[] = [];
+
+            const flushGroup = () => {
+                if (group.length === 0) return;
+                // If group is all inline elements with no bare text, push as-is
+                const groupHasText = group.some((c) => isText(c));
+                if (groupHasText) {
+                    newChildren.push({
+                        type: 'element',
+                        tagName: 'span',
+                        properties: {},
+                        children: group,
+                    });
+                } else {
+                    newChildren.push(...group);
+                }
+                group = [];
+            };
+
+            for (const child of node.children) {
+                if (isText(child) || (isElement(child) && INLINE_TAGS.has(child.tagName))) {
+                    group.push(child);
+                } else {
+                    flushGroup();
+                    newChildren.push(child);
+                }
+            }
+            flushGroup();
+
+            node.children = newChildren;
+        });
+    };
+};

@@ -2,6 +2,7 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
 import remarkRehype from 'remark-rehype';
+import rehypeRaw from 'rehype-raw';
 import rehypeStringify from 'rehype-stringify';
 import type { Plugin } from 'unified';
 import type { Root } from 'hast';
@@ -14,7 +15,8 @@ export async function processWithPlugin(
     const processor = unified()
         .use(remarkParse)
         .use(remarkGfm)
-        .use(remarkRehype, { allowDangerousHtml: true });
+        .use(remarkRehype, { allowDangerousHtml: true })
+        .use(rehypeRaw);
 
     if (pluginOptions !== undefined) {
         processor.use(plugin, pluginOptions);
