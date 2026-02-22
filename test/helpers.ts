@@ -30,3 +30,30 @@ export async function processWithPlugin(
 
     return String(file);
 }
+
+type PluginEntry = Plugin<any[], Root> | [Plugin<any[], Root>, any];
+
+export async function processWithPlugins(
+    markdown: string,
+    plugins: PluginEntry[],
+): Promise<string> {
+    const processor = unified()
+        .use(remarkParse)
+        .use(remarkGfm)
+        .use(remarkRehype, { allowDangerousHtml: true })
+        .use(rehypeRaw);
+
+    for (const entry of plugins) {
+        if (Array.isArray(entry)) {
+            processor.use(entry[0], entry[1]);
+        } else {
+            processor.use(entry);
+        }
+    }
+
+    const file = await processor
+        .use(rehypeStringify, { allowDangerousHtml: true })
+        .process(markdown);
+
+    return String(file);
+}
