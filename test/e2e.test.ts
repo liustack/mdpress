@@ -1,0 +1,100 @@
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { render } from '../src/wechat/renderer.ts';
+import * as fs from 'fs';
+import * as path from 'path';
+import sharp from 'sharp';
+
+const FIXTURES_DIR = path.resolve(__dirname, 'fixtures');
+const IMAGES_DIR = path.join(FIXTURES_DIR, 'images');
+const TMP_DIR = path.resolve(__dirname, '../test-output');
+
+beforeAll(async () => {
+    fs.mkdirSync(TMP_DIR, { recursive: true });
+    fs.mkdirSync(IMAGES_DIR, { recursive: true });
+
+    // Generate test image if not exists
+    const imgPath = path.join(IMAGES_DIR, 'small.png');
+    if (!fs.existsSync(imgPath)) {
+        await sharp({
+            create: { width: 10, height: 10, channels: 3, background: { r: 255, g: 0, b: 0 } },
+        })
+            .png()
+            .toFile(imgPath);
+    }
+});
+
+afterAll(() => {
+    fs.rmSync(TMP_DIR, { recursive: true, force: true });
+});
+
+describe('end-to-end', () => {
+    let html: string;
+
+    beforeAll(async () => {
+        const inputPath = path.join(FIXTURES_DIR, 'sample.md');
+        const outputPath = path.join(TMP_DIR, 'sample.html');
+        await render({ input: inputPath, output: outputPath });
+        html = fs.readFileSync(outputPath, 'utf-8');
+    });
+
+    it('should not contain dangerous tags', () => {
+        expect(html).not.toContain('<script');
+        expect(html).not.toContain('<style>');
+        expect(html).not.toContain('<link');
+        expect(html).not.toContain('<iframe');
+        expect(html).not.toContain('<input');
+        expect(html).not.toContain('<div');
+    });
+
+    it('should not contain class attributes', () => {
+        expect(html).not.toMatch(/\bclass="/);
+    });
+
+    it('should have style attributes on major elements', () => {
+        // Check that style= appears multiple times (inline styles applied)
+        const styleCount = (html.match(/style="/g) || []).length;
+        expect(styleCount).toBeGreaterThan(5);
+    });
+
+    it('should convert external links to footnotes with References section', () => {
+        expect(html).toContain('References');
+        expect(html).toContain('https://github.com');
+        expect(html).toContain('https://example.com');
+        expect(html).toContain('<sup');
+    });
+
+    it('should preserve mp.weixin.qq.com links', () => {
+        expect(html).toContain('mp.weixin.qq.com');
+        expect(html).toMatch(/<a[^>]*mp\.weixin\.qq\.com/);
+    });
+
+    it('should have <br> in code blocks (whitespace protection)', () => {
+        // Code block with multiple lines should have <br> tags
+        expect(html).toContain('<br>');
+    });
+
+    it('should convert task list checkboxes to Unicode', () => {
+        expect(html).toContain('☑');
+        expect(html).toContain('☐');
+    });
+
+    it('should convert images to base64 data URIs', () => {
+        expect(html).toContain('data:image/');
+        expect(html).toContain('base64,');
+    });
+
+    it('should convert div to section', () => {
+        expect(html).toContain('<section');
+        expect(html).not.toContain('<div');
+    });
+
+    it('should remove script tags', () => {
+        expect(html).not.toContain('alert');
+        expect(html).not.toContain('xss');
+    });
+
+    it('should have syntax highlighting colors in code blocks', () => {
+        // One Dark theme colors should be present
+        expect(html).toContain('#282c34'); // code background
+    });
+});
