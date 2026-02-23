@@ -9,9 +9,9 @@ describe('rehypeInlineStyles', () => {
         expect(html).toContain('line-height: 1.75');
     });
 
-    it('should add font-size: 24px to h1 tags', async () => {
-        const html = await processWithPlugin('# Title', rehypeInlineStyles);
-        expect(html).toContain('font-size: 24px');
+    it('should add font-size: 20px to h2 tags', async () => {
+        const html = await processWithPlugin('## Subtitle', rehypeInlineStyles);
+        expect(html).toContain('font-size: 20px');
     });
 
     it('should use "pre code" style for code inside pre', async () => {
@@ -49,7 +49,7 @@ describe('rehypeInlineStyles', () => {
             '```javascript\nconst x = 1;\n```',
             [rehypeCodeHighlight, rehypeInlineStyles],
         );
-        // hljs-keyword maps to color: #9b2393 (Xcode Light purple)
+        // hljs-keyword maps to color: #9b2393 (keyword purple)
         expect(html).toContain('#9b2393');
     });
 

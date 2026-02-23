@@ -1,6 +1,6 @@
 /**
  * Default style map for WeChat MP editor inline styles.
- * Apple-inspired minimalist design adapted from pagepress default template.
+ * Default minimalist design for WeChat MP editor.
  *
  * Keys: tag names, compound selectors ("pre code"), or hljs class names ("hljs-keyword").
  * Values: CSS property strings to inject as inline styles.
@@ -16,13 +16,12 @@ const F = `font-family: ${FONT_BODY};`;
 const FM = `font-family: ${FONT_MONO};`;
 
 export const defaultStyles: StyleMap = {
-    // Headings — Apple style: 600 weight, tight letter-spacing
-    h1: `${F} font-size: 24px; font-weight: 600; margin: 0 0 16px; line-height: 1.2; letter-spacing: -0.02em; color: #1d1d1f;`,
+    // Headings — 600 weight (h1 is downgraded to h2 by sanitize plugin)
     h2: `${F} font-size: 20px; font-weight: 600; margin: 32px 0 12px; line-height: 1.25; color: #1d1d1f;`,
     h3: `${F} font-size: 17px; font-weight: 600; margin: 24px 0 8px; line-height: 1.3; color: #1d1d1f;`,
-    h4: `${F} font-size: 15px; font-weight: 600; margin: 20px 0 6px; line-height: 1.4; color: #6e6e73;`,
-    h5: `${F} font-size: 14px; font-weight: 600; margin: 16px 0 4px; line-height: 1.4; color: #6e6e73;`,
-    h6: `${F} font-size: 13px; font-weight: 600; margin: 16px 0 4px; line-height: 1.4; color: #86868b;`,
+    h4: `${F} font-size: 16px; font-weight: 600; margin: 20px 0 6px; line-height: 1.4; color: #1d1d1f;`,
+    h5: `${F} font-size: 16px; font-weight: 600; margin: 16px 0 4px; line-height: 1.4; color: #1d1d1f;`,
+    h6: `${F} font-size: 16px; font-weight: 600; margin: 16px 0 4px; line-height: 1.4; color: #1d1d1f;`,
 
     // Paragraphs — 16px body, 1.75 line-height (comfortable for Chinese)
     p: `${F} font-size: 16px; line-height: 1.75; margin: 0 0 1.25em; color: #1d1d1f;`,
@@ -73,7 +72,7 @@ export const defaultStyles: StyleMap = {
     // Mark
     mark: 'background: #fff3b0; padding: 0.1em 0.3em; border-radius: 2px;',
 
-    // hljs — Xcode Light theme (matching light code block background)
+    // hljs — default syntax highlighting theme (matching light code block background)
     'hljs-keyword': 'color: #9b2393; font-weight: 600;',
     'hljs-string': 'color: #c41a16;',
     'hljs-number': 'color: #1c00cf;',

@@ -5,7 +5,7 @@ import { visit, SKIP } from 'unist-util-visit';
 /** Tags allowed in WeChat MP editor output. */
 const ALLOWED_TAGS = new Set([
     // Block
-    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'h2', 'h3', 'h4', 'h5', 'h6',
     'p', 'blockquote', 'pre', 'code',
     'ul', 'ol', 'li',
     'table', 'thead', 'tbody', 'tr', 'th', 'td',
@@ -32,7 +32,7 @@ const REMOVE_WITH_CHILDREN = new Set([
 
 /** Block-level tags whose direct text children should be wrapped in <span>. */
 const BLOCK_TAGS = new Set([
-    'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'p', 'h2', 'h3', 'h4', 'h5', 'h6',
     'blockquote', 'li', 'td', 'th', 'figcaption', 'section',
 ]);
 
@@ -153,6 +153,11 @@ export const rehypeSanitizeTags: Plugin<[], Root> = () => {
                 // Non-checkbox input: remove
                 parent.children.splice(index, 1);
                 return [SKIP, index];
+            }
+
+            // h1 → h2 (article title is set outside the editor; body content starts at h2)
+            if (node.tagName === 'h1') {
+                node.tagName = 'h2';
             }
 
             // div → section

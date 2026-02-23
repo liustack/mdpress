@@ -3,15 +3,25 @@ import { processWithPlugin } from '../helpers.ts';
 import { rehypeSanitizeTags } from '../../src/wechat/plugins/index.ts';
 
 describe('rehypeSanitizeTags', () => {
-    it('should preserve allowed tags (p, h1, strong, em)', async () => {
+    it('should preserve allowed tags (p, h2, strong, em)', async () => {
         const html = await processWithPlugin(
-            '# Title\n\n**bold** and *italic*',
+            '## Subtitle\n\n**bold** and *italic*',
             rehypeSanitizeTags,
         );
-        expect(html).toContain('<h1>');
+        expect(html).toContain('<h2>');
         expect(html).toContain('<strong>');
         expect(html).toContain('<em>');
         expect(html).toContain('<p>');
+    });
+
+    it('should downgrade h1 to h2 (article title is set outside editor)', async () => {
+        const html = await processWithPlugin(
+            '# Title',
+            rehypeSanitizeTags,
+        );
+        expect(html).not.toContain('<h1');
+        expect(html).toContain('<h2>');
+        expect(html).toContain('Title');
     });
 
     it('should remove script tags with children', async () => {
