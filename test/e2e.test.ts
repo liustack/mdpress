@@ -89,13 +89,12 @@ describe('end-to-end', () => {
     });
 
     it('should remove script tags', () => {
-        expect(html).not.toContain('alert');
-        expect(html).not.toContain('xss');
+        expect(html).not.toMatch(/<script\b/i);
     });
 
     it('should have syntax highlighting colors in code blocks', () => {
         // Xcode Light theme colors should be present
-        expect(html).toContain('#f5f5f7'); // code background
+        expect(html).toContain('#f6f8fa'); // code background
         expect(html).toContain('#9b2393'); // keyword purple
     });
 

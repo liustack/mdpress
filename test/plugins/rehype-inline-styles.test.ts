@@ -16,8 +16,8 @@ describe('rehypeInlineStyles', () => {
 
     it('should use "pre code" style for code inside pre', async () => {
         const html = await processWithPlugin('```\ncode\n```', rehypeInlineStyles);
-        // pre code style has background: #f5f5f7 (Apple light gray)
-        expect(html).toContain('#f5f5f7');
+        // pre code style has background: #f6f8fa (GitHub light gray)
+        expect(html).toContain('#f6f8fa');
     });
 
     it('should use inline code style with subtle gray background', async () => {

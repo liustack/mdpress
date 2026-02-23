@@ -52,6 +52,14 @@ Read this [WeChat Article](https://mp.weixin.qq.com/s/abc123).
 
 ![test](images/small.png)
 
+![Blue Poster](images/poster-blue.png)
+
+![Purple Poster](images/poster-purple.png)
+
+![Teal Poster](images/poster-teal.png)
+
+![Large Photo](images/photo-large.png)
+
 ## Formatting
 
 This has ~~strikethrough~~ text and <mark>highlighted</mark> text.
@@ -67,4 +75,47 @@ graph TD
     A[Start] --> B{Decision}
     B -->|Yes| C[OK]
     B -->|No| D[Cancel]
+```
+
+## Architecture Diagram
+
+```mermaid
+graph TD
+    subgraph CLI
+        main[main.ts]
+    end
+
+    main --> wechat
+    main --> preview
+
+    subgraph wechat[WeChat Domain]
+        renderer[renderer.ts]
+        subgraph plugins[Plugins]
+            sanitize[rehype-sanitize-tags]
+            mermaid[rehype-mermaid]
+            base64[rehype-base64-images]
+            highlight[rehype-code-highlight]
+            footnote[rehype-footnote-links]
+            inline[rehype-inline-styles]
+        end
+        subgraph styles[Styles]
+            defaultStyle[default.ts]
+        end
+        renderer --> sanitize
+        sanitize --> mermaid
+        mermaid --> base64
+        base64 --> highlight
+        highlight --> footnote
+        footnote --> inline
+        inline --> defaultStyle
+    end
+
+    subgraph preview[Preview Domain]
+        pw[Playwright]
+        clipboard[Clipboard API]
+        pw --> chromium[Chromium]
+        chromium --> clipboard
+    end
+
+    mermaid --> pw
 ```

@@ -61,6 +61,38 @@ describe('rehypeSanitizeTags', () => {
         expect(html).not.toContain('onclick');
     });
 
+    it('should remove unsafe javascript href attributes', async () => {
+        const html = await processWithPlugin(
+            '<a href="javascript:alert(1)">click</a>',
+            rehypeSanitizeTags,
+        );
+        expect(html).toContain('<a>');
+        expect(html).not.toContain('href=');
+        expect(html).not.toContain('javascript:');
+    });
+
+    it('should remove unsafe javascript src attributes on images', async () => {
+        const html = await processWithPlugin(
+            '<img src="javascript:alert(1)" alt="x">',
+            rehypeSanitizeTags,
+        );
+        expect(html).toContain('<img');
+        expect(html).not.toContain('src=');
+        expect(html).not.toContain('javascript:');
+    });
+
+    it('should strip disallowed inline style declarations', async () => {
+        const html = await processWithPlugin(
+            '<p style="color: red; position: fixed; font-family: evil; background-image: url(https://x)">text</p>',
+            rehypeSanitizeTags,
+        );
+        expect(html).toContain('style=');
+        expect(html).toContain('color');
+        expect(html).not.toMatch(/position\s*:/i);
+        expect(html).not.toMatch(/font-family\s*:/i);
+        expect(html).not.toMatch(/url\s*\(/i);
+    });
+
     it('should wrap bare text in block elements with span', async () => {
         const html = await processWithPlugin(
             'Hello world',

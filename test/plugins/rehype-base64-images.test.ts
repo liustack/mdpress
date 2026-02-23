@@ -64,6 +64,15 @@ describe('rehypeBase64Images', () => {
         expect(html).toContain('https://example.com/img.png');
     });
 
+    it('should throw when local image file is missing', async () => {
+        const md = `![alt](images/not-found.png)`;
+        await expect(
+            processWithPlugin(md, rehypeBase64Images, {
+                baseDir: path.resolve(__dirname, '../fixtures'),
+            }),
+        ).rejects.toThrow('Image file not found');
+    });
+
     it('should compress large images to fit under 2MB', async () => {
         const md = `![alt](images/large.png)`;
         const html = await processWithPlugin(md, rehypeBase64Images, {

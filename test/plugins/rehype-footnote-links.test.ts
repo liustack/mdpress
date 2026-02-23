@@ -46,6 +46,14 @@ describe('rehypeFootnoteLinks', () => {
         expect(html).not.toContain('<sup>');
     });
 
+    it('should treat protocol-relative links as external links', async () => {
+        const md = '[CDN](//example.com/lib.js)';
+        const html = await processWithPlugin(md, rehypeFootnoteLinks);
+        expect(html).not.toContain('<a');
+        expect(html).toContain('<sup>');
+        expect(html).toContain('//example.com/lib.js');
+    });
+
     it('should append References section at the end', async () => {
         const md = '[Example](https://example.com)\n\nSome text.';
         const html = await processWithPlugin(md, rehypeFootnoteLinks);
