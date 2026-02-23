@@ -94,7 +94,8 @@ describe('end-to-end', () => {
     });
 
     it('should have syntax highlighting colors in code blocks', () => {
-        // One Dark theme colors should be present
-        expect(html).toContain('#282c34'); // code background
+        // Xcode Light theme colors should be present
+        expect(html).toContain('#f5f5f7'); // code background
+        expect(html).toContain('#9b2393'); // keyword purple
     });
 });

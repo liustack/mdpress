@@ -6,7 +6,7 @@ describe('rehypeInlineStyles', () => {
     it('should add font-size and line-height to p tags', async () => {
         const html = await processWithPlugin('Hello world', rehypeInlineStyles);
         expect(html).toContain('font-size: 15px');
-        expect(html).toContain('line-height: 1.8');
+        expect(html).toContain('line-height: 1.75');
     });
 
     it('should add font-size: 24px to h1 tags', async () => {
@@ -16,13 +16,14 @@ describe('rehypeInlineStyles', () => {
 
     it('should use "pre code" style for code inside pre', async () => {
         const html = await processWithPlugin('```\ncode\n```', rehypeInlineStyles);
-        // pre code style has background: #282c34 (One Dark)
-        expect(html).toContain('#282c34');
+        // pre code style has background: #f5f5f7 (Apple light gray)
+        expect(html).toContain('#f5f5f7');
     });
 
-    it('should use inline code style with #e96900 for inline code', async () => {
+    it('should use inline code style with subtle gray background', async () => {
         const html = await processWithPlugin('Use `inline` code', rehypeInlineStyles);
-        expect(html).toContain('#e96900');
+        expect(html).toContain('#f5f5f7');
+        expect(html).toContain('#1d1d1f');
     });
 
     it('should remove className attributes', async () => {
@@ -48,15 +49,15 @@ describe('rehypeInlineStyles', () => {
             '```javascript\nconst x = 1;\n```',
             [rehypeCodeHighlight, rehypeInlineStyles],
         );
-        // hljs-keyword maps to color: #c678dd
-        expect(html).toContain('#c678dd');
+        // hljs-keyword maps to color: #9b2393 (Xcode Light purple)
+        expect(html).toContain('#9b2393');
     });
 
     it('should add styles to table elements', async () => {
         const md = '| A | B |\n|---|---|\n| 1 | 2 |';
         const html = await processWithPlugin(md, rehypeInlineStyles);
         expect(html).toContain('border-collapse');
-        expect(html).toContain('border: 1px solid');
+        expect(html).toContain('border-bottom');
     });
 
     it('should style blockquote with border-left', async () => {
