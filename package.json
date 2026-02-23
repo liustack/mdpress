@@ -53,6 +53,10 @@
     "unified": "^11.0.5",
     "unist-util-visit": "^5.0.0"
   },
+  "optionalDependencies": {
+    "mermaid": "^11.4.1",
+    "playwright": "^1.52.0"
+  },
   "devDependencies": {
     "@types/node": "^22.19.7",
     "typescript": "^5.9.3",

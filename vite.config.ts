@@ -25,6 +25,8 @@ export default defineConfig({
                 'sharp',
                 'rehype-highlight',
                 'lowlight',
+                'mermaid',
+                'playwright',
                 // Node.js built-ins
                 'fs',
                 'path',
