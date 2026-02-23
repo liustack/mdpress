@@ -27,6 +27,7 @@ export default defineConfig({
                 'lowlight',
                 'mermaid',
                 'playwright',
+                '@crosscopy/clipboard',
                 // Node.js built-ins
                 'fs',
                 'path',
