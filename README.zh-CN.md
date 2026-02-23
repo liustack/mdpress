@@ -1,10 +1,14 @@
 # mdpress
 
-面向 AI Agent 的 Markdown 转换 CLI，可将 Markdown 文件输出为微信公众号编辑器兼容的 HTML，包含内联样式、base64 图片和标签清洗。
+面向 AI Agent 的 Markdown 转换 CLI，可将 Markdown 输出为编辑器可粘贴的 HTML：
+
+- **微信公众号模式**：内联样式、base64 图片、语法高亮、标签清洗
+- **X/Twitter Articles 模式**：语义化子集 HTML、图片占位文本、仅保留 HTTPS 链接
 
 ## 特性
 
 - 输出微信公众号编辑器兼容的 HTML
+- 输出 X/Twitter Articles 编辑器兼容的 HTML
 - 所有样式内联（无外部 CSS 或 `<style>` 标签）
 - 本地图片经 sharp 压缩后嵌入为 base64（单张 ≤ 2MB）
 - 默认极简主题语法高亮（内联色值）
@@ -43,6 +47,9 @@ npx skills add https://github.com/liustack/mdpress --skill mdpress
 ```bash
 # 将 Markdown 转换为公众号可用的 HTML
 mdpress -i article.md -o output.html
+
+# 将 Markdown 转换为 X/Twitter Articles 可粘贴的 HTML
+mdpress -i article.md -o output.html --target x
 ```
 
 输出为 JSON 格式：
@@ -72,6 +79,19 @@ mdpress 使用 unified（remark + rehype）管线，依次执行 6 个转换：
 
 - `-i, --input <path>` — 输入 Markdown 文件路径（必填）
 - `-o, --output <path>` — 输出 HTML 文件路径（必填）
+- `-t, --target <target>` — 渲染目标：`wechat`（默认）或 `x`（支持别名 `twitter`）
+- `-c, --copy` — 将渲染后的 HTML 复制到系统剪贴板（富文本）
+
+## X/Twitter Articles 模式
+
+使用 `--target x`（或 `--target twitter`）生成适配 X Articles 编辑器的极简语义化 HTML。
+
+- 保留：`h2`、`p`、`strong/b`、`em/i`、`s/del`、`a`、`blockquote`、`ul/ol/li`、`br`
+- 移除不支持的结构标签与样式属性
+- 所有 Markdown 图片转换为占位文本（`[Image: ...]`）
+- 仅 `https://` 链接保留为真实 `<a href="...">`
+- 协议相对链接（`//...`）会转换为 `https://...`
+- 其他链接（`http`、`mailto`、`tel`、`file`、相对路径、锚点）降级为纯文本
 
 ## AI Agent Skill
 

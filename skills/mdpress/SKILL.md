@@ -1,11 +1,13 @@
 ---
 name: mdpress
-description: "Convert Markdown files into WeChat Official Account (公众号) editor-ready HTML with inline styles, base64 images, syntax highlighting, and footnote links. Use when user mentions 'WeChat', '公众号', 'markdown to wechat', 'mdpress', '微信公众号', 'WeChat article', '公众号文章', 'WeChat HTML', or needs to convert markdown for WeChat MP editor."
+description: "Convert Markdown files into editor-ready HTML. Supports WeChat Official Account (公众号) mode and X/Twitter Articles mode."
 ---
 
-# mdpress — WeChat MP HTML
+# mdpress — WeChat + X Articles HTML
 
-CLI tool to convert Markdown into WeChat Official Account (公众号) editor-compatible HTML.
+CLI tool to convert Markdown into editor-compatible HTML:
+- WeChat Official Account (公众号) mode
+- X/Twitter Articles mode
 
 ## Installation
 
@@ -31,6 +33,9 @@ npx playwright install chromium
 # Convert Markdown to WeChat-ready HTML (file output)
 mdpress -i article.md -o output.html
 
+# Convert Markdown to X/Twitter Articles-ready HTML
+mdpress -i article.md -o output.html --target x
+
 # Convert and copy to system clipboard (for direct paste into WeChat editor)
 mdpress -i article.md -o output.html --copy
 ```
@@ -49,7 +54,19 @@ Output is JSON:
 
 - `-i, --input <path>` — Input Markdown file path (required)
 - `-o, --output <path>` — Output HTML file path (required)
+- `-t, --target <target>` — `wechat` (default), `x`, or `twitter` (alias of `x`)
 - `-c, --copy` — Copy rendered HTML to system clipboard as rich text (for direct paste into WeChat editor)
+
+## X/Twitter Articles Mode
+
+Use `--target x` (or `--target twitter`) for X Articles editor:
+
+- Keep only semantic subset: `h2`, `p`, `strong/b`, `em/i`, `s/del`, `a`, `blockquote`, `ul/ol/li`, `br`
+- Convert every image to placeholder text: `[Image: ...]`
+- Remove unsupported structure/style tags
+- Keep only `https://` links as `<a href="...">`
+- Convert `//...` links to `https://...`
+- Downgrade non-HTTPS links (`http`, `mailto`, `tel`, `file`, relative paths, anchors) to plain text
 
 ## Mandatory Workflow (AI Agent MUST Follow)
 

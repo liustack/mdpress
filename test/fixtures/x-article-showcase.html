@@ -1,0 +1,107 @@
+<h2>X Articles 粘贴兼容性全量测试（H1 会映射为正文 H2）</h2>
+<h2>1. 基础文本与行内样式</h2>
+<p>这是一段正文，包含 <strong>粗体</strong>、<em>斜体</em>、<em><strong>粗斜体</strong></em>、<del>删除线</del>、inline code、以及普通文本。</p>
+<p>也测试一些特殊字符：&#x3C; > &#x26; " '，以及 emoji：🚀 ✅ ✨。</p>
+<h2>2. 链接能力（X 编辑器应保留）</h2>
+<ul>
+<li>外部链接：<a href="https://openai.com">OpenAI</a></li>
+<li>协议相对链接：<a href="https://cdn.example.com/lib.js">CDN Link</a></li>
+<li>邮件链接：联系我</li>
+<li>电话链接：拨打电话</li>
+<li>锚点链接：跳到列表</li>
+</ul>
+<blockquote>
+<p>引用块：链接在引用中也应保留，例如 <a href="https://developers.x.com">Docs</a>。</p>
+</blockquote>
+<h2>3. 列表（含嵌套） {#section-lists}</h2>
+<ul>
+<li>一级无序项 A</li>
+<li>一级无序项 B
+<ul>
+<li>二级无序项 B.1</li>
+<li>二级无序项 B.2（含 <a href="https://example.org">链接</a>）</li>
+</ul>
+</li>
+<li>一级无序项 C</li>
+</ul>
+<ol>
+<li>一级有序项 1</li>
+<li>一级有序项 2
+<ol>
+<li>二级有序项 2.1</li>
+<li>二级有序项 2.2</li>
+</ol>
+</li>
+<li>一级有序项 3</li>
+</ol>
+<h2>任务列表（通常会被降级为普通列表文本）</h2>
+<ul>
+<li> 已完成任务</li>
+<li> 待办任务</li>
+</ul>
+
+<h2>4. 图片（X 不支持图片，需转占位文本）</h2>
+<p>下面三张图用于验证“图片 => 占位文本”策略：</p>
+<p>[Image: Small PNG 示例图]</p>
+<p>[Image: Tiny PNG 图标]</p>
+<p>[Image: Poster Blue 海报]</p>
+<h2>5. 表格（X 通常不支持，预期降级为纯文本）</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+特性预期行为说明img不保留转占位文本table不保留表格结构仅保留文本pre/code不保留代码块结构仅保留文本
+<h2>6. 代码块（X 通常吞掉结构）</h2>
+interface User {
+  id: string;
+  name: string;
+  tags: string[];
+}
+
+const user: User = {
+  id: 'u_001',
+  name: 'Alice',
+  tags: ['writer', 'editor'],
+};
+
+console.log(user);
+
+pnpm build
+pnpm test
+mdpress -i test/fixtures/x-article-showcase.md -o test/fixtures/x-article-showcase.html --target x --copy
+
+<h2>7. Mermaid（X 不支持图像粘贴，预期转占位）</h2>
+graph TD
+  A[Draft] --> B[Review]
+  B --> C[Publish]
+
+<h2>8. 原生 HTML（应被剥离/降级）</h2>
+
+  这是 div + style + span 的原生 HTML：
+  Inner span text
+
+
+
+<h2>9. 总结</h2>
+<p>如果转换正确，X 模式输出应只保留最小语义化子集（标题/段落/列表/引用/链接/强调），并把图片替换成可读占位文本。</p>

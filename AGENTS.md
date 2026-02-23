@@ -1,7 +1,9 @@
 # Project Overview (for AI Agent)
 
 ## Goal
-Provide the `mdpress` CLI tool to convert local Markdown files into **WeChat MP-compatible HTML** with inline styles, base64 images, and sanitized tags. The output can be directly pasted into the WeChat Official Accounts editor.
+Provide the `mdpress` CLI tool to convert local Markdown files into editor-compatible HTML:
+- **WeChat MP mode**: inline styles, base64 images, and sanitized tags
+- **X/Twitter Articles mode**: minimal semantic HTML subset with image placeholders and preserved links
 
 ## Technical Approach
 - **unified + remark + rehype** as the Markdown processing pipeline
@@ -59,6 +61,9 @@ Markdown → remarkParse → remarkGfm → remarkRehype → rehypeRaw
 
 ```bash
 mdpress -i article.md -o output.html
+
+# X/Twitter Articles mode
+mdpress -i article.md -o output.html --target x
 ```
 
 ## Clipboard Notes

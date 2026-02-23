@@ -1,12 +1,16 @@
 # mdpress
 
-A CLI toolkit for AI agents to convert Markdown into WeChat MP-ready HTML with inline styles, base64 images, and tag sanitization.
+A CLI toolkit for AI agents to convert Markdown into editor-ready HTML:
+
+- **WeChat MP mode**: inline styles, base64 images, syntax highlighting, tag sanitization
+- **X Articles mode**: semantic HTML subset, image placeholders, link-preserving plain content
 
 中文说明请见：[README.zh-CN.md](README.zh-CN.md)
 
 ## Features
 
 - WeChat MP editor compatible HTML output
+- X/Twitter Articles editor compatible HTML output
 - All styles inlined (no external CSS or `<style>` tags)
 - Local images compressed via sharp and embedded as base64 (≤ 2MB)
 - Syntax highlighting with default theme (inline colors)
@@ -45,6 +49,9 @@ npx skills add https://github.com/liustack/mdpress --skill mdpress
 ```bash
 # Convert Markdown to WeChat-ready HTML
 mdpress -i article.md -o output.html
+
+# Convert Markdown to X/Twitter Articles editor-ready HTML
+mdpress -i article.md -o output.html --target x
 ```
 
 Output is JSON:
@@ -74,6 +81,19 @@ The result is a self-contained HTML file that can be directly pasted into the We
 
 - `-i, --input <path>` — Input Markdown file path (required)
 - `-o, --output <path>` — Output HTML file path (required)
+- `-t, --target <target>` — Render target: `wechat` (default) or `x` (`twitter` alias)
+- `-c, --copy` — Copy rendered HTML to system clipboard as rich text
+
+## X/Twitter Articles Mode
+
+Use `--target x` (or `--target twitter`) to generate a minimal semantic HTML subset for X Articles editor paste.
+
+- Keeps: `h2`, `p`, `strong/b`, `em/i`, `s/del`, `a`, `blockquote`, `ul/ol/li`, `br`
+- Drops unsupported structure/style tags
+- Converts every Markdown image into placeholder text (`[Image: ...]`)
+- Keeps only `https://` links as real `<a href="...">` anchors
+- Converts protocol-relative links (`//...`) to `https://...`
+- Downgrades non-HTTPS links (`http:`, `mailto:`, `tel:`, `file:`, relative paths, anchors) to plain text
 
 ## AI Agent Skill
 
