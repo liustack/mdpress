@@ -60,12 +60,23 @@ Markdown → remarkParse → remarkGfm → remarkRehype → rehypeRaw
 mdpress -i article.md -o output.html
 ```
 
+## Mermaid Plugin Notes
+
+`rehypeMermaid` renders mermaid code blocks to 2x PNG via Playwright Chromium.
+
+**Key constraints:**
+- `deviceScaleFactor: 2` + `<img width>` for Retina clarity — do NOT change to 1x (blurry)
+- `htmlLabels: true` is required — `false` breaks CJK text wrapping
+- sharp SVG→PNG is NOT viable (librsvg doesn't support foreignObject)
+- SVG z-ordering: edges may cross subgraph titles — this is a mermaid limitation, accepted
+- Read `docs/mermaid.md` before modifying this plugin
+
 ## Operational Docs (`docs/`)
 
 1. Operational docs use front-matter metadata (`summary`, `read_when`).
 2. Before creating a new doc, run `pnpm docs:list` to review the existing index.
 3. Before coding, check the `read_when` hints and read relevant docs as needed.
-4. Existing docs: `commit`, `testing`, `research/wechat-editor-compatibility`.
+4. Existing docs: `commit`, `testing`, `mermaid`, `research/wechat-editor-compatibility`.
 
 ## .gitignore must include
 - `node_modules/`

@@ -143,6 +143,19 @@ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
 5. 避免嵌套 SVG
 6. SVG 内 `<image>` 标签的图片需转为 base64 Data URI（注意微信对此支持不可靠，优先考虑不使用 `<image>`）
 
+#### Mermaid 图表的特殊处理（2026-02-22 实测）
+
+微信不支持内联 SVG 的复杂子集（mermaid 生成的 SVG 包含 `<style>`、`<foreignObject>`、`id` 等），因此 mermaid 图表必须转为 PNG 位图。
+
+**采用方案：** Playwright Chromium 截图（`deviceScaleFactor: 2`）+ `<img width>` 控制显示尺寸。
+
+**排除的替代方案：**
+- sharp SVG→PNG：librsvg 不支持 `<foreignObject>`，而 mermaid `htmlLabels: true` 依赖 foreignObject 渲染文字
+- deviceScaleFactor: 1：手机 Retina 屏幕上文字模糊
+- mermaid API 导出：无法分离渲染质量与输出尺寸
+
+详见 `docs/mermaid.md`。
+
 ### 3.5 代码块空白保护
 
 #### B 级证据（bm.md + md2oa 共识）
