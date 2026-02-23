@@ -28,12 +28,13 @@ src/
     ├── plugins/                # Rehype plugins for WeChat transformations
     │   ├── index.ts            # Re-exports all plugins
     │   ├── rehype-sanitize-tags.ts    # Tag whitelist, div→section, checkbox→Unicode
+    │   ├── rehype-mermaid.ts            # Mermaid diagrams → Playwright + PNG base64 (optional)
     │   ├── rehype-base64-images.ts    # Local images → sharp compress → base64
     │   ├── rehype-code-highlight.ts   # Syntax highlighting + whitespace protection
     │   ├── rehype-footnote-links.ts   # External links → footnotes + References
     │   └── rehype-inline-styles.ts    # Default styles + hljs colors → inline style
     └── styles/                 # Style definitions
-        └── default.ts          # Default style map + One Dark hljs theme colors
+        └── default.ts          # Apple-inspired minimalist style map + Xcode Light hljs theme
 ```
 
 ## Pipeline Execution Order
@@ -41,10 +42,11 @@ src/
 ```
 Markdown → remarkParse → remarkGfm → remarkRehype → rehypeRaw
   → 1. rehypeSanitizeTags     (tag whitelist, div→section, checkbox→Unicode, attribute cleanup)
-  → 2. rehypeBase64Images     (local images → sharp compress → base64 data URI)
-  → 3. rehypeCodeHighlight    (syntax highlighting + whitespace protection)
-  → 4. rehypeFootnoteLinks    (external links → footnotes, preserve mp.weixin.qq.com)
-  → 5. rehypeInlineStyles     (default styles + hljs colors → inline style attr, remove className)
+  → 2. rehypeMermaid          (mermaid code blocks → Playwright render → PNG base64, optional)
+  → 3. rehypeBase64Images     (local images → sharp compress → base64 data URI)
+  → 4. rehypeCodeHighlight    (syntax highlighting + whitespace protection)
+  → 5. rehypeFootnoteLinks    (external links → footnotes, preserve mp.weixin.qq.com)
+  → 6. rehypeInlineStyles     (default styles + hljs colors → inline style attr, remove className)
   → rehypeStringify → HTML
 ```
 

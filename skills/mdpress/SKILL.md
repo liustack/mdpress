@@ -84,10 +84,11 @@ mdpress applies these transformations in sequence:
 ```
 Markdown → remarkParse → remarkGfm → remarkRehype → rehypeRaw
   → 1. rehypeSanitizeTags     (tag whitelist, div→section, checkbox→Unicode, attribute cleanup)
-  → 2. rehypeBase64Images     (local images → sharp compress → base64 data URI)
-  → 3. rehypeCodeHighlight    (syntax highlighting + whitespace protection)
-  → 4. rehypeFootnoteLinks    (external links → footnotes, preserve mp.weixin.qq.com)
-  → 5. rehypeInlineStyles     (default styles + hljs colors → inline style attr, remove className)
+  → 2. rehypeMermaid          (mermaid code blocks → Playwright render → PNG base64, optional)
+  → 3. rehypeBase64Images     (local images → sharp compress → base64 data URI)
+  → 4. rehypeCodeHighlight    (syntax highlighting + whitespace protection)
+  → 5. rehypeFootnoteLinks    (external links → footnotes, preserve mp.weixin.qq.com)
+  → 6. rehypeInlineStyles     (default styles + hljs colors → inline style attr, remove className)
   → rehypeStringify → HTML
 ```
 
@@ -103,3 +104,4 @@ After conversion, the output HTML should have:
 - [ ] Code blocks use `<br>` for line breaks and NBSP for indentation
 - [ ] Local images converted to `data:image/...;base64,...`
 - [ ] Task list checkboxes rendered as ☑ / ☐
+- [ ] Mermaid code blocks converted to PNG `<img>` (if mermaid + playwright installed)
