@@ -131,15 +131,16 @@ Enforcement:
 
 ## npm Publishing Workflow
 
-Before every `pnpm publish`, you MUST create a git tag matching the version:
+Steps in order — do not skip or reorder:
 
 ```bash
+pnpm build
 git tag v$(node -p "require('./package.json').version")
 git push origin v$(node -p "require('./package.json').version")
 pnpm publish --access public --no-git-checks
 ```
 
-This is a hard requirement. Do not publish without tagging first.
+Build and tag are hard requirements. Do not publish without them.
 
 ## .gitignore must include
 - `node_modules/`
