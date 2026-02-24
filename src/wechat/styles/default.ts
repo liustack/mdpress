@@ -44,7 +44,7 @@ export const defaultStyles: StyleMap = {
     a: 'color: #576b95; text-decoration: none;',
 
     // Images
-    img: 'max-width: 100%; height: auto; display: block; margin: 1.5em auto; border-radius: 10px;',
+    img: 'max-width: 100%; height: auto; display: block; margin: 0 auto 1.5em; border-radius: 10px;',
 
     // Tables — minimalist: collapse borders, thin lines
     table: `${F} width: 100%; border-collapse: collapse; margin: 1.5em 0; font-size: 16px; border-radius: 2px;`,
