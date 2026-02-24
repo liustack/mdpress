@@ -129,6 +129,18 @@ Enforcement:
 - Skipping `pnpm docs:list` or required doc reading is a process violation.
 - "I already know this" is not a valid reason to skip this workflow.
 
+## npm Publishing Workflow
+
+Before every `pnpm publish`, you MUST create a git tag matching the version:
+
+```bash
+git tag v$(node -p "require('./package.json').version")
+git push origin v$(node -p "require('./package.json').version")
+pnpm publish --access public --no-git-checks
+```
+
+This is a hard requirement. Do not publish without tagging first.
+
 ## .gitignore must include
 - `node_modules/`
 - `dist/`
