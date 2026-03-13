@@ -1,25 +1,34 @@
 ---
-name: markpress
-description: "Convert Markdown files into editor-ready HTML. Supports WeChat Official Account (公众号) mode and X/Twitter Articles mode."
+name: wxpress
+description: "Format and package Markdown articles for WeChat Official Account (公众号) publishing. Also supports X/Twitter Articles mode."
 ---
 
-# markpress — WeChat + X Articles HTML
+# wxpress — Format & Package Articles for WeChat Publishing
 
-CLI tool to convert Markdown into editor-compatible HTML:
-- WeChat Official Account (公众号) mode
-- X/Twitter Articles mode
+**wxpress** formats and packages Markdown articles for **WeChat Official Account (公众号) publishing**. It handles all the painful WeChat editor constraints automatically — inline styles, base64 images, link-to-footnote conversion, code formatting — so you can **write in Markdown, publish to WeChat in one step**.
+
+Also supports X/Twitter Articles as a secondary target.
+
+## Key Features
+
+- **One-command WeChat publishing** — Markdown → clipboard-ready HTML, paste directly into the WeChat MP editor
+- **Full WeChat compatibility** — inline styles only, base64-encoded images, tag sanitization, footnoted links
+- **Image processing** — local images auto-compressed and embedded as base64 data URIs (≤ 2MB)
+- **Mermaid diagrams** — code blocks rendered to PNG via Playwright (optional)
+- **Code highlighting** — syntax colors inlined, whitespace preserved for WeChat's quirky rendering
+- **X/Twitter Articles mode** — semantic HTML subset for X Articles editor
 
 ## Installation
 
 ```bash
-npm install -g @liustack/markpress@latest
+npm install -g @liustack/wxpress@latest
 ```
 
-> **Version check**: Before converting, run `markpress --version`. If the command is not found or the version is outdated, re-run the install command above.
+> **Version check**: Before converting, run `wxpress --version`. If the command is not found or the version is outdated, re-run the install command above.
 
 ### Playwright Chromium (Required for Mermaid)
 
-`mermaid` and `playwright` are bundled as dependencies. After installing markpress, download the Chromium browser binary:
+`mermaid` and `playwright` are bundled as dependencies. After installing, download the Chromium browser binary:
 
 ```bash
 npx playwright install chromium
@@ -30,14 +39,14 @@ npx playwright install chromium
 ## Usage
 
 ```bash
-# Convert Markdown to WeChat-ready HTML (file output)
-markpress -i article.md -o output.html
+# Format Markdown for WeChat and save to file
+wxpress -i article.md -o output.html
 
-# Convert Markdown to X/Twitter Articles-ready HTML
-markpress -i article.md -o output.html --target x
+# Format and copy to clipboard — paste directly into WeChat MP editor
+wxpress -i article.md -o output.html --copy
 
-# Convert and copy to system clipboard (for direct paste into WeChat editor)
-markpress -i article.md -o output.html --copy
+# Format for X/Twitter Articles
+wxpress -i article.md -o output.html --target x
 ```
 
 Output is JSON:
@@ -57,17 +66,6 @@ Output is JSON:
 - `-t, --target <target>` — `wechat` (default), `x`, or `twitter` (alias of `x`)
 - `-c, --copy` — Copy rendered HTML to system clipboard as rich text (for direct paste into WeChat editor)
 
-## X/Twitter Articles Mode
-
-Use `--target x` (or `--target twitter`) for X Articles editor:
-
-- Keep only semantic subset: `h2`, `p`, `strong/b`, `em/i`, `s/del`, `a`, `blockquote`, `ul/ol/li`, `br`
-- Convert every image to placeholder text: `[Image: ...]`
-- Remove unsupported structure/style tags
-- Keep only `https://` links as `<a href="...">`
-- Convert `//...` links to `https://...`
-- Downgrade non-HTTPS links (`http`, `mailto`, `tel`, `file`, relative paths, anchors) to plain text
-
 ## Mandatory Workflow (AI Agent MUST Follow)
 
 > [!CAUTION]
@@ -75,28 +73,30 @@ Use `--target x` (or `--target twitter`) for X Articles editor:
 
 1. **Prepare Markdown** — Write or locate the Markdown file. Ensure all images use **relative paths** from the Markdown file's directory.
 2. **Confirm output path** — Decide where the HTML should be saved (the `-o` path).
-3. **Run markpress** — Execute the conversion:
+3. **Run wxpress** — Execute the conversion:
    ```bash
-   markpress -i article.md -o output.html
+   wxpress -i article.md -o output.html
    ```
    Or with clipboard copy:
    ```bash
-   markpress -i article.md -o output.html --copy
+   wxpress -i article.md -o output.html --copy
    ```
 4. **Check result** — Verify the JSON output shows a successful result with `size > 0`.
 5. **Deliver** — Tell the user the output HTML path. If `--copy` was used, inform them the HTML is ready to paste directly into the WeChat MP editor.
 
-## WeChat MP Editor Constraints
+## What wxpress Handles for WeChat
 
 > [!IMPORTANT]
-> The WeChat MP editor has strict limitations. markpress handles all of these automatically, but the AI agent should understand the constraints to verify output quality.
+> The WeChat MP editor has strict limitations. wxpress handles all of these automatically so you don't have to.
 
-- **Inline styles only** — no `<style>`, `<link>`, or `<script>` tags; all CSS must be in `style` attributes
-- **Base64 images** — local images are compressed (sharp) and converted to base64 data URIs (≤ 2MB per image)
-- **Tag whitelist** — only WeChat-supported tags survive; `<div>` → `<section>`, dangerous tags removed entirely
-- **Code whitespace** — `\n` → `<br>`, all spaces → NBSP, tabs → NBSP pairs; `text-align: left` on code blocks to prevent WeChat justify
-- **External links → footnotes** — external `<a>` tags become text + `<sup>[N]</sup>` with a References section; `mp.weixin.qq.com` links are preserved
-- **No class attributes** — all `className` removed; hljs syntax highlighting classes converted to inline color styles
+| WeChat Constraint | How wxpress Solves It |
+|---|---|
+| **Inline styles only** — no `<style>`, `<link>`, `<script>` | All CSS converted to `style` attributes |
+| **No external images** | Local images compressed (sharp) → base64 data URIs (≤ 2MB) |
+| **Limited tag support** | `<div>` → `<section>`, dangerous tags removed, tag whitelist enforced |
+| **Code formatting breaks** | `\n` → `<br>`, spaces → NBSP, tabs → NBSP pairs, `text-align: left` |
+| **External links blocked** | Links → text + `<sup>[N]</sup>` footnotes; `mp.weixin.qq.com` links preserved |
+| **No class attributes** | All `className` removed; hljs colors → inline styles |
 
 ## Image Handling
 
@@ -111,9 +111,18 @@ Use `--target x` (or `--target twitter`) for X Articles editor:
 > [!CAUTION]
 > **Images must use relative paths** from the Markdown file location. Absolute paths or URLs to local files won't resolve correctly.
 
-## Pipeline Processing Order
+## X/Twitter Articles Mode
 
-markpress applies these transformations in sequence:
+Use `--target x` (or `--target twitter`) for X Articles editor:
+
+- Keep only semantic subset: `h2`, `p`, `strong/b`, `em/i`, `s/del`, `a`, `blockquote`, `ul/ol/li`, `br`
+- Convert every image to placeholder text: `[Image: ...]`
+- Remove unsupported structure/style tags
+- Keep only `https://` links as `<a href="...">`
+- Convert `//...` links to `https://...`
+- Downgrade non-HTTPS links to plain text
+
+## Pipeline Processing Order
 
 ```
 Markdown → remarkParse → remarkGfm → remarkRehype → rehypeRaw

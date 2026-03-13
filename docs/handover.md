@@ -1,5 +1,5 @@
 ---
-summary: 'Project handover: background, architecture decisions, and next steps for markpress'
+summary: 'Project handover: background, architecture decisions, and next steps for wxpress'
 read_when:
   - First time working on this project
   - Need to understand project context and decisions
@@ -10,11 +10,11 @@ read_when:
 
 ## Project Background
 
-markpress is part of a personal document rendering toolchain ("press" series):
+wxpress is part of a personal document rendering toolchain ("press" series):
 
 - **webpress** — HTML → PNG
 - **pagepress** — Markdown/HTML → PDF
-- **markpress** — Markdown → WeChat MP-compatible HTML
+- **wxpress** — Markdown → WeChat MP-compatible HTML
 
 Each tool is an independent CLI designed for AI agent consumption. They share naming conventions and architectural patterns but do not share code. The relationship is pipeline upstream/downstream, not library dependency.
 
@@ -22,7 +22,7 @@ Each tool is an independent CLI designed for AI agent consumption. They share na
 
 pagepress uses `marked` for its Markdown parsing, which works fine because its output goes straight to Playwright for rendering — no HTML-level transformation needed.
 
-markpress is different. Its three core operations are all **HTML AST transformations**:
+wxpress is different. Its three core operations are all **HTML AST transformations**:
 
 1. Sanitize unsupported tags
 2. Convert local images to base64

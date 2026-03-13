@@ -1,4 +1,4 @@
-# markpress
+# wxpress
 
 A CLI toolkit for AI agents to convert Markdown into editor-ready HTML:
 
@@ -23,35 +23,35 @@ A CLI toolkit for AI agents to convert Markdown into editor-ready HTML:
 ## Installation
 
 ```bash
-npm install -g @liustack/markpress
+npm install -g @liustack/wxpress
 ```
 
 Or run with `npx`:
 
 ```bash
-npx @liustack/markpress [options]
+npx @liustack/wxpress [options]
 ```
 
 Or install as an **Agent Skill** — tell any AI coding tool that supports agent skills (Claude Code, Codex, OpenCode, Cursor, Antigravity, etc.):
 
 ```
-Install the skill from https://github.com/liustack/markpress
+Install the skill from liustack/wxpress
 ```
 
 Or use the `skills` CLI directly:
 
 ```bash
-npx skills add https://github.com/liustack/markpress --skill markpress
+npx skills add liustack/wxpress --skill wxpress
 ```
 
 ## Usage
 
 ```bash
 # Convert Markdown to WeChat-ready HTML
-markpress -i article.md -o output.html
+wxpress -i article.md -o output.html
 
 # Convert Markdown to X/Twitter Articles editor-ready HTML
-markpress -i article.md -o output.html --target x
+wxpress -i article.md -o output.html --target x
 ```
 
 Output is JSON:
@@ -66,7 +66,7 @@ Output is JSON:
 
 ## What It Does
 
-markpress runs your Markdown through a unified (remark + rehype) pipeline that applies 6 transformations in order:
+wxpress runs your Markdown through a unified (remark + rehype) pipeline that applies 6 transformations in order:
 
 1. **Sanitize tags** — whitelist-based tag filtering, `div` → `section`, checkbox → Unicode ☑/☐, remove `id` and event handlers
 2. **Mermaid diagrams** — mermaid code blocks rendered to PNG via Playwright with minimalist theme (optional, requires `mermaid` + `playwright`)
@@ -97,7 +97,7 @@ Use `--target x` (or `--target twitter`) to generate a minimal semantic HTML sub
 
 ## AI Agent Skill
 
-- [markpress/SKILL.md](skills/markpress/SKILL.md)
+- [wxpress/SKILL.md](skills/wxpress/SKILL.md)
 
 ## License
 

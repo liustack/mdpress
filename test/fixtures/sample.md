@@ -1,4 +1,4 @@
-# Welcome to markpress
+# Welcome to wxpress
 
 This is a **bold** and *italic* paragraph with `inline code`.
 

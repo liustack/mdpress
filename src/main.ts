@@ -18,7 +18,7 @@ function normalizeTarget(input: string): RenderTarget {
 }
 
 program
-    .name('markpress')
+    .name('wxpress')
     .description('Convert Markdown into editor-ready HTML (WeChat MP or X Articles)')
     .version(__APP_VERSION__)
     .requiredOption('-i, --input <path>', 'Input Markdown file path')
