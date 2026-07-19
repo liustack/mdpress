@@ -1,4 +1,4 @@
-# Welcome to wxpress
+# Welcome to PostPress
 
 This is a **bold** and *italic* paragraph with `inline code`.
 

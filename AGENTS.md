@@ -1,7 +1,7 @@
 # Project Overview (for AI Agent)
 
 ## Goal
-Provide the `wxpress` CLI tool to convert local Markdown files into editor-compatible HTML:
+Provide the `postpress` CLI tool to convert local Markdown files into editor-compatible HTML:
 - **WeChat MP mode**: inline styles, base64 images, and sanitized tags
 - **X/Twitter Articles mode**: minimal semantic HTML subset with image placeholders and preserved links
 
@@ -55,15 +55,15 @@ Markdown → remarkParse → remarkGfm → remarkRehype → rehypeRaw
 
 ## Skills Directory
 
-- **wxpress** — `skills/wxpress/SKILL.md`: Convert Markdown to WeChat MP-ready HTML
+- **postpress** — `skills/postpress/SKILL.md`: Convert Markdown to editor-ready HTML for WeChat and X Articles
 
 ## CLI Usage
 
 ```bash
-wxpress -i article.md -o output.html
+postpress -i article.md -o output.html
 
 # X/Twitter Articles mode
-wxpress -i article.md -o output.html --target x
+postpress -i article.md -o output.html --target x
 ```
 
 ## Clipboard Notes

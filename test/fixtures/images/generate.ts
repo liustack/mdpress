@@ -13,7 +13,7 @@ async function main() {
             </linearGradient>
         </defs>
         <rect width="200" height="200" fill="url(#g)" rx="16"/>
-        <text x="100" y="90" text-anchor="middle" font-size="20" font-weight="600" fill="white" font-family="sans-serif">wxpress</text>
+        <text x="100" y="90" text-anchor="middle" font-size="20" font-weight="600" fill="white" font-family="sans-serif">postpress</text>
         <text x="100" y="120" text-anchor="middle" font-size="14" fill="rgba(255,255,255,0.8)" font-family="sans-serif">200x200 PNG</text>
     </svg>`);
     await sharp(pngSvg).png().toFile(path.join(dir, 'small.png'));
@@ -28,7 +28,7 @@ async function main() {
             </linearGradient>
         </defs>
         <rect width="200" height="200" fill="url(#g2)" rx="16"/>
-        <text x="100" y="90" text-anchor="middle" font-size="20" font-weight="600" fill="white" font-family="sans-serif">wxpress</text>
+        <text x="100" y="90" text-anchor="middle" font-size="20" font-weight="600" fill="white" font-family="sans-serif">postpress</text>
         <text x="100" y="120" text-anchor="middle" font-size="14" fill="rgba(255,255,255,0.8)" font-family="sans-serif">200x200 GIF</text>
     </svg>`);
     const pngBuf = await sharp(gifSvg).png().toBuffer();
@@ -45,17 +45,23 @@ async function main() {
             </linearGradient>
         </defs>
         <rect width="800" height="600" fill="url(#bg)"/>
-        <text x="400" y="270" text-anchor="middle" font-size="48" font-weight="700" fill="white" font-family="sans-serif">wxpress</text>
+        <text x="400" y="270" text-anchor="middle" font-size="48" font-weight="700" fill="white" font-family="sans-serif">postpress</text>
         <text x="400" y="320" text-anchor="middle" font-size="20" fill="rgba(255,255,255,0.6)" font-family="sans-serif">Markdown → WeChat HTML</text>
         <text x="400" y="370" text-anchor="middle" font-size="14" fill="rgba(255,255,255,0.4)" font-family="sans-serif">800x600 Large Image Test</text>
     </svg>`);
     await sharp(largeSvg).png().toFile(path.join(dir, 'large.png'));
     console.log('large.png: done');
 
-    // 10x10 tiny PNG (for rejection test)
-    await sharp({
-        create: { width: 10, height: 10, channels: 3, background: { r: 255, g: 255, b: 0 } },
-    }).png().toFile(path.join(dir, 'tiny.png'));
+    // 50x50 tiny PNG (large enough to pass file-size validation, too small by dimensions)
+    const tinyNoise = Buffer.alloc(50 * 50 * 3);
+    let seed = 0x12345678;
+    for (let i = 0; i < tinyNoise.length; i++) {
+        seed = (Math.imul(1664525, seed) + 1013904223) >>> 0;
+        tinyNoise[i] = seed >>> 24;
+    }
+    await sharp(tinyNoise, { raw: { width: 50, height: 50, channels: 3 } })
+        .png()
+        .toFile(path.join(dir, 'tiny.png'));
     console.log('tiny.png: done');
 
     // Verify

@@ -1,5 +1,5 @@
 ---
-summary: 'Project handover: background, architecture decisions, and next steps for wxpress'
+summary: 'Project handover: background, architecture decisions, and next steps for PostPress'
 read_when:
   - First time working on this project
   - Need to understand project context and decisions
@@ -10,11 +10,11 @@ read_when:
 
 ## Project Background
 
-wxpress is part of a personal document rendering toolchain ("press" series):
+PostPress is part of a personal document rendering toolchain ("press" series):
 
 - **webpress** — HTML → PNG
 - **pagepress** — Markdown/HTML → PDF
-- **wxpress** — Markdown → WeChat MP-compatible HTML
+- **postpress** — Markdown → editor-compatible HTML for WeChat and X Articles
 
 Each tool is an independent CLI designed for AI agent consumption. They share naming conventions and architectural patterns but do not share code. The relationship is pipeline upstream/downstream, not library dependency.
 
@@ -22,7 +22,7 @@ Each tool is an independent CLI designed for AI agent consumption. They share na
 
 pagepress uses `marked` for its Markdown parsing, which works fine because its output goes straight to Playwright for rendering — no HTML-level transformation needed.
 
-wxpress is different. Its three core operations are all **HTML AST transformations**:
+PostPress is different. Its three core operations are all **HTML AST transformations**:
 
 1. Sanitize unsupported tags
 2. Convert local images to base64

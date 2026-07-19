@@ -1,11 +1,11 @@
 ---
-name: wxpress
-description: "Format and package Markdown articles for WeChat Official Account (公众号) publishing. Also supports X/Twitter Articles mode."
+name: postpress
+description: "Use when the user wants to convert Markdown into editor-ready HTML for WeChat Official Accounts or X Articles, including inline styles, embedded local images, rich-text clipboard output, or platform-safe link handling."
 ---
 
-# wxpress — Format & Package Articles for WeChat Publishing
+# PostPress — Format & Package Articles for WeChat Publishing
 
-**wxpress** formats and packages Markdown articles for **WeChat Official Account (公众号) publishing**. It handles all the painful WeChat editor constraints automatically — inline styles, base64 images, link-to-footnote conversion, code formatting — so you can **write in Markdown, publish to WeChat in one step**.
+**PostPress** formats and packages Markdown articles for **WeChat Official Account (公众号) publishing**. It handles all the painful WeChat editor constraints automatically — inline styles, base64 images, link-to-footnote conversion, code formatting — so you can **write in Markdown, publish to WeChat in one step**.
 
 Also supports X/Twitter Articles as a secondary target.
 
@@ -21,10 +21,10 @@ Also supports X/Twitter Articles as a secondary target.
 ## Installation
 
 ```bash
-npm install -g @liustack/wxpress@latest
+npm install -g @liustack/postpress@latest
 ```
 
-> **Version check**: Before converting, run `wxpress --version`. If the command is not found or the version is outdated, re-run the install command above.
+> **Version check**: Before converting, run `postpress --version`. If the command is not found or the version is outdated, re-run the install command above.
 
 ### Playwright Chromium (Required for Mermaid)
 
@@ -40,13 +40,13 @@ npx playwright install chromium
 
 ```bash
 # Format Markdown for WeChat and save to file
-wxpress -i article.md -o output.html
+postpress -i article.md -o output.html
 
 # Format and copy to clipboard — paste directly into WeChat MP editor
-wxpress -i article.md -o output.html --copy
+postpress -i article.md -o output.html --copy
 
 # Format for X/Twitter Articles
-wxpress -i article.md -o output.html --target x
+postpress -i article.md -o output.html --target x
 ```
 
 Output is JSON:
@@ -73,23 +73,23 @@ Output is JSON:
 
 1. **Prepare Markdown** — Write or locate the Markdown file. Ensure all images use **relative paths** from the Markdown file's directory.
 2. **Confirm output path** — Decide where the HTML should be saved (the `-o` path).
-3. **Run wxpress** — Execute the conversion:
+3. **Run PostPress** — Execute the conversion:
    ```bash
-   wxpress -i article.md -o output.html
+   postpress -i article.md -o output.html
    ```
    Or with clipboard copy:
    ```bash
-   wxpress -i article.md -o output.html --copy
+   postpress -i article.md -o output.html --copy
    ```
 4. **Check result** — Verify the JSON output shows a successful result with `size > 0`.
 5. **Deliver** — Tell the user the output HTML path. If `--copy` was used, inform them the HTML is ready to paste directly into the WeChat MP editor.
 
-## What wxpress Handles for WeChat
+## What PostPress Handles for WeChat
 
 > [!IMPORTANT]
-> The WeChat MP editor has strict limitations. wxpress handles all of these automatically so you don't have to.
+> The WeChat MP editor has strict limitations. PostPress handles all of these automatically so you don't have to.
 
-| WeChat Constraint | How wxpress Solves It |
+| WeChat Constraint | How PostPress Solves It |
 |---|---|
 | **Inline styles only** — no `<style>`, `<link>`, `<script>` | All CSS converted to `style` attributes |
 | **No external images** | Local images compressed (sharp) → base64 data URIs (≤ 2MB) |

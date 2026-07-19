@@ -1,10 +1,10 @@
 {
-  "name": "@liustack/wxpress",
+  "name": "@liustack/postpress",
   "version": "1.0.0",
-  "description": "CLI for AI agents to convert Markdown into WeChat MP-ready HTML with inline styles, base64 images, and tag sanitization",
+  "description": "CLI for AI agents to convert Markdown into editor-ready HTML for WeChat and X Articles",
   "type": "module",
   "bin": {
-    "wxpress": "./dist/main.js"
+    "postpress": "./dist/main.js"
   },
   "scripts": {
     "dev": "vite build --watch",
@@ -21,9 +21,9 @@
   "keywords": [
     "markdown",
     "wechat",
-    "wechat-mp",
-    "inline-styles",
-    "base64-images",
+    "x-articles",
+    "publishing",
+    "inline-html",
     "cli",
     "ai-agent"
   ],
@@ -31,12 +31,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/liustack/wxpress.git"
+    "url": "git+https://github.com/liustack/postpress.git"
   },
   "bugs": {
-    "url": "https://github.com/liustack/wxpress/issues"
+    "url": "https://github.com/liustack/postpress/issues"
   },
-  "homepage": "https://github.com/liustack/wxpress#readme",
+  "homepage": "https://github.com/liustack/postpress#readme",
   "engines": {
     "node": ">=18"
   },

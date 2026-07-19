@@ -1,6 +1,6 @@
 # 用 Markdown 写微信公众号文章
 
-用 wxpress 将 Markdown 渲染为微信公众号编辑器兼容的富文本 HTML，支持图片、代码高亮、Mermaid 流程图、表格等全部特性。
+用 PostPress 将 Markdown 渲染为微信公众号编辑器兼容的富文本 HTML，支持图片、代码高亮、Mermaid 流程图、表格等全部特性。
 
 ---
 
@@ -21,13 +21,13 @@ Markdown 是技术写作的事实标准。相比在微信编辑器中手动排�
 ### 安装
 
 ```bash
-npm install -g wxpress
+npm install -g @liustack/postpress
 ```
 
 ### 使用
 
 ```bash
-wxpress -i article.md -o output.html --copy
+postpress -i article.md -o output.html --copy
 ```
 
 加上 `--copy` 参数会自动将渲染结果复制到剪贴板，直接粘贴到微信编辑器即可。
@@ -36,7 +36,7 @@ wxpress -i article.md -o output.html --copy
 
 ## 代码高亮
 
-wxpress 使用 highlight.js 进行语法高亮，支持 180+ 种语言。以下是几种常见语言的效果：
+PostPress 使用 highlight.js 进行语法高亮，支持 180+ 种语言。以下是几种常见语言的效果：
 
 ### TypeScript
 
@@ -74,7 +74,7 @@ def publish(article: Article) -> None:
 
 ```json
 {
-  "name": "wxpress",
+  "name": "postpress",
   "version": "0.1.0",
   "plugins": ["base64-images", "code-highlight", "mermaid"]
 }
@@ -160,7 +160,7 @@ graph LR
 
 ```mermaid
 graph TD
-    A[编写 Markdown] --> B[wxpress 渲染]
+    A[编写 Markdown] --> B[PostPress 渲染]
     B --> C{是否启用 --copy?}
     C -->|是| D[自动复制到剪贴板]
     C -->|否| E[输出 HTML 文件]
@@ -210,7 +210,7 @@ graph TD
 
 这是一段包含各种行内样式的文本：**粗体强调**、*斜体*、`行内代码`、~~删除线~~，以及 <mark>高亮标记</mark>。
 
-链接也有特殊样式：访问 [wxpress 项目](https://github.com) 了解更多。
+链接也有特殊样式：访问 [PostPress 项目](https://github.com/liustack/postpress) 了解更多。
 
 ### 引用
 
@@ -232,7 +232,7 @@ graph TD
 ### 有序列表
 
 1. 编写 Markdown 源文件
-2. 运行 `wxpress -i input.md -o output.html`
+2. 运行 `postpress -i input.md -o output.html`
 3. 复制 HTML 到微信编辑器
 4. 预览效果，调整细节
 5. 发布文章
@@ -260,7 +260,7 @@ graph TD
 
 ## 脚注
 
-wxpress 支持 GFM 脚注语法[^1]。脚注内容会在文章底部显示[^2]，并且链接会被转换为微信编辑器兼容的格式[^3]。
+PostPress 支持 GFM 脚注语法[^1]。脚注内容会在文章底部显示[^2]，并且链接会被转换为微信编辑器兼容的格式[^3]。
 
 [^1]: GFM 即 GitHub Flavored Markdown，是 GitHub 对标准 Markdown 的扩展。
 [^2]: 微信公众号编辑器不支持锚点跳转，因此脚注链接会被转换为纯文本上标。
