@@ -63,7 +63,7 @@ Read this [WeChat Article](https://mp.weixin.qq.com/s/V5lGAY95eQs3v1j5fZlSUA).
 
 ![Teal Poster](images/poster-teal.png)
 
-![Large Photo](images/photo-large.png)
+![Large Photo](images/large.png)
 
 ## Formatting
 

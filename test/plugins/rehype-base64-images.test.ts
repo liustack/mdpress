@@ -13,27 +13,38 @@ beforeAll(async () => {
     // Generate a 200x200 PNG with noise (ensures file > 2KB)
     const noiseBuffer = Buffer.alloc(200 * 200 * 3);
     for (let i = 0; i < noiseBuffer.length; i++) noiseBuffer[i] = Math.floor(Math.random() * 256);
-    await sharp(noiseBuffer, { raw: { width: 200, height: 200, channels: 3 } })
-        .png()
-        .toFile(path.join(FIXTURES_DIR, 'small.png'));
+    const smallPngPath = path.join(FIXTURES_DIR, 'small.png');
+    if (!fs.existsSync(smallPngPath)) {
+        await sharp(noiseBuffer, { raw: { width: 200, height: 200, channels: 3 } })
+            .png()
+            .toFile(smallPngPath);
+    }
 
     // Generate a 200x200 GIF with noise (ensures file > 2KB)
     const pngBuf = await sharp(noiseBuffer, { raw: { width: 200, height: 200, channels: 3 } })
         .png()
         .toBuffer();
-    await sharp(pngBuf).gif().toFile(path.join(FIXTURES_DIR, 'small.gif'));
+    const smallGifPath = path.join(FIXTURES_DIR, 'small.gif');
+    if (!fs.existsSync(smallGifPath)) {
+        await sharp(pngBuf).gif().toFile(smallGifPath);
+    }
 
     // Generate a tiny 50x50 PNG with noise (above 2KB file size, below 120px dimension)
     const tinyNoise = Buffer.alloc(50 * 50 * 3);
     for (let i = 0; i < tinyNoise.length; i++) tinyNoise[i] = Math.floor(Math.random() * 256);
-    await sharp(tinyNoise, { raw: { width: 50, height: 50, channels: 3 } })
-        .png()
-        .toFile(path.join(FIXTURES_DIR, 'tiny.png'));
+    const tinyPngPath = path.join(FIXTURES_DIR, 'tiny.png');
+    if (!fs.existsSync(tinyPngPath)) {
+        await sharp(tinyNoise, { raw: { width: 50, height: 50, channels: 3 } })
+            .png()
+            .toFile(tinyPngPath);
+    }
 
     // Generate a detailed SVG icon (document + pen with gradients, shadows, shapes)
-    fs.writeFileSync(
-        path.join(FIXTURES_DIR, 'icon.svg'),
-        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+    const iconPath = path.join(FIXTURES_DIR, 'icon.svg');
+    if (!fs.existsSync(iconPath)) {
+        fs.writeFileSync(
+            iconPath,
+            `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
   <defs>
     <linearGradient id="docGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#667eea"/>
@@ -65,14 +76,18 @@ beforeAll(async () => {
   <circle cx="85" cy="22" r="1" fill="#764ba2" opacity="0.4"/>
   <text x="60" y="108" text-anchor="middle" font-size="9" font-family="system-ui,sans-serif" font-weight="600" fill="#6e6e73">wxpress</text>
 </svg>`,
-    );
+        );
+    }
 
     // Generate a large image (3000x3000 to test compression)
-    await sharp({
-        create: { width: 3000, height: 3000, channels: 3, background: { r: 128, g: 128, b: 128 } },
-    })
-        .png({ compressionLevel: 0 }) // uncompressed = large
-        .toFile(path.join(FIXTURES_DIR, 'large.png'));
+    const largePngPath = path.join(FIXTURES_DIR, 'large.png');
+    if (!fs.existsSync(largePngPath)) {
+        await sharp({
+            create: { width: 3000, height: 3000, channels: 3, background: { r: 128, g: 128, b: 128 } },
+        })
+            .png({ compressionLevel: 0 }) // uncompressed = large
+            .toFile(largePngPath);
+    }
 });
 
 describe('rehypeBase64Images', () => {
